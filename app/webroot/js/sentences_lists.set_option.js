@@ -16,49 +16,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-$(document).ready(function() {
-
-    $("input[name=visibility]").change(function(){
-        var value = $(this).val();
-        var listId = $(this).attr('data-list-id');
-
-        $(".is-public.loader-container").html(
-            "<div class='loader loader-small'></div>"
-        );
-
-        setOption(listId, 'visibility', value, function(data){
-            $("input[name=visibility][value="+value+"]").prop(
-                'checked', data["visibility"] === value
+angular.module('app', ['ngMaterial'])
+     .controller('ListOptionsCtrl', function($scope, $element){
+         
+         $scope.editOption = selectedEditOption;
+         $scope.editOptionChanged = function (){
+            $(".is-editable.loader-container").html(
+                "<div class='loader loader-small'></div>"
             );
-            $(".is-public.loader-container").html("");
-        });
-    });
-
-    $("input[name=editable_by]").change(function(){
-        var value = $(this).val();
-        var listId = $(this).attr('data-list-id');
-
-        $("#editableCheckbox").hide();
-
-        $(".is-editable.loader-container").html(
-            "<div class='loader loader-small'></div>"
-        );
-        setOption(listId, 'editable_by', value, function(data){
-            $("input[name=editable_by][value="+value+"]").prop(
-                'checked', data["editable_by"] === value
+            var rootUrl = get_tatoeba_root_url();
+            $.post(
+                rootUrl + "/sentences_lists/set_option/",
+                { "listId": $element.attr("data-list-id"), "option": 'editable_by', "value":  $scope.editOption},
+                function(data){
+                    $(".is-editable.loader-container").html("");
+                }
             );
-            $(".is-editable.loader-container").html("");
-        });
-    });
+        };
+        
+         $scope.visibilityOption = selectedVisibilityOption;
+         $scope.visibilityOptionChanged = function (){
+            $(".is-public.loader-container").html(
+                "<div class='loader loader-small'></div>"
+            );
+            var rootUrl = get_tatoeba_root_url();
+            $.post(
+                rootUrl + "/sentences_lists/set_option/",
+                { "listId": $element.attr("data-list-id"), "option": 'visibility', "value":  $scope.visibilityOption},
+                function(data){
+                    $(".is-public.loader-container").html("");
+                }
+            );
+        };
+        
+     });
 
-    function setOption(listId, optionName, optionValue, callback) {
-        var rootUrl = get_tatoeba_root_url();
-        $.post(
-            rootUrl + "/sentences_lists/set_option/",
-            { "listId": listId, "option": optionName, "value": optionValue },
-            callback
-        );
-    }
 
-});

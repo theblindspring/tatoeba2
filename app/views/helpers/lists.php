@@ -282,6 +282,10 @@ class ListsHelper extends AppHelper
 
     public function displayVisibilityOption($listId, $value)
     {
+        echo "<script>"; 
+        echo "var selectedVisibilityOption = '" . $value . "';";
+        echo "if(selectedVisibilityOption == ''){selectedVisibilityOption = 'no_one';}";
+        echo "</script>";
         $this->Javascript->link(
             JS_PATH . 'sentences_lists.set_option.js', false
         );
@@ -291,21 +295,12 @@ class ListsHelper extends AppHelper
             $title = __('List visibility', true);
             $loader = "<div class='is-public loader-container'></div>";
             echo $this->Html->tag('dt', $title . $loader);
-
-            echo $this->Form->radio(
-                'visibility',
-                array(
-                    'public' => __('Public', true),
-                    'unlisted' => __('Unlisted', true),
-                    'private' => __('Private', true)
-                ),
-                array(
-                    "name" => "visibility",
-                    "value" => $value,
-                    "data-list-id" => $listId,
-                    "separator" => "<br/>"
-                )
-            );
+            
+            echo "<md-radio-group ng-model='visibilityOption' data-list-id='" . $listId ."' ng-change='visibilityOptionChanged()' ng-controller='ListOptionsCtrl' >";
+            echo "<md-radio-button value='public' > " . __('Public', true) . " </md-radio-button>";
+            echo "<md-radio-button value='unlisted'> " .  __('Unlisted', true) . " </md-radio-button>";
+            echo "<md-radio-button value='private'> " . __('Private', true) . " </md-radio-button>";
+            echo "</md-radio-group>";
             ?>
         </dl>
         <?php
@@ -319,6 +314,11 @@ class ListsHelper extends AppHelper
      */
     public function displayEditableByOptions($listId, $value)
     {
+        echo "<script>"; 
+        echo "var selectedEditOption = '" . $value . "';";
+        echo "if(selectedEditOption == ''){selectedEditOption = 'no_one';}";
+        echo "</script>";
+        
         $this->Javascript->link(
             JS_PATH.'sentences_lists.set_option.js', false
         );
@@ -328,21 +328,12 @@ class ListsHelper extends AppHelper
                 $title = __('Who can add/remove sentences', true);
                 $loader = "<div class='is-editable loader-container'></div>";
                 echo $this->Html->tag('dt', $title.$loader);
-
-                echo $this->Form->radio(
-                    'editable_by',
-                    array(
-                        'anyone' => __('Anyone', true),
-                        'creator' => __('Only me', true),
-                        'no_one' => __('No one (list inactive)', true),
-                    ),
-                    array(
-                        'name' => 'editable_by',
-                        'value' => $value,
-                        'data-list-id' => $listId,
-                        'separator' => '<br/>',
-                    )
-                );
+                
+                echo "<md-radio-group ng-model='editOption' data-list-id='" . $listId ."' ng-change='editOptionChanged()' ng-controller='ListOptionsCtrl' >";
+                echo "<md-radio-button value='anyone' >" .  __('Anyone', true) . "</md-radio-button>";
+                echo "<md-radio-button value='creator'>" . __('Only me', true) . "</md-radio-button>";
+                echo "<md-radio-button value='no_one'> " . __('No one (list inactive)', true) . " </md-radio-button>";
+                echo "</md-radio-group>";
             ?>
         </dl>
         <?php
