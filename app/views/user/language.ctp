@@ -81,21 +81,16 @@ $this->set('title_for_layout', Sanitize::html($pages->formatTitle($title)));
 
         $radioLabels = $languages->getLevelsLabels();
         ?>
-        <script>
-        function selectHiddenRadio(self) {
-            $('input[value=' + $(self).attr('value') + ']').attr('checked', 'true'); 
-            }
-        </script>
+
         <?php
         echo "<legend>" . __('What is your level?', true) . "</legend>";
         echo "<md-radio-group>";
         foreach($radioLabels as $key => $radioLabel){
-            echo "<md-radio-button onclick='selectHiddenRadio(this)' value='" . $key . "'>" . $radioLabel . "</md-radio-button>";
+            echo "<md-radio-button value='" . $key . "'>" . $radioLabel . "</md-radio-button>";
         }
         echo "</md-radio-group>";
 
         // Level
-        echo "<div style='display: none'>";
         echo $form->radio(
             'level',
             $radioLabels,
@@ -105,7 +100,7 @@ $this->set('title_for_layout', Sanitize::html($pages->formatTitle($title)));
                 'value' => $selected
             )
         );
-        echo "</div>";
+        
         // Details
         echo $html->tag(
             'label',
