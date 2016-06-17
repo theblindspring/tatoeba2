@@ -72,9 +72,17 @@ if (!isset($lastText)) {
         );
         ?>
         </p>
+        
+
+        
         <p>
             <?php
             __('Convert text from: ');
+            echo "<md-radio-group id='tool-from'>";
+            echo "<md-radio-button name='data[Tool][from]' value='chinese'>" . __('Chinese characters', true) . "</md-radio-button>";
+            echo "<md-radio-button name='data[Tool][from]' value='numPinyin'>" . __('numerical pinyin', true) . "</md-radio-button>";
+            echo "</md-radio-group>";
+            
             echo $form->radio(
                 'from',
                 array(
@@ -90,6 +98,12 @@ if (!isset($lastText)) {
         <p>
             <?php
             __('Convert text to: ');
+            
+            echo "<md-radio-group id='tool-to'>";
+            echo "<md-radio-button name='data[Tool][to]' value='numPinyin'>" . __('numerical pinyin', true) . "</md-radio-button>";
+            echo "<md-radio-button name='data[Tool][to]' value='diacPinyin'>" .  __('diacritical pinyin', true) . "</md-radio-button>";
+            echo "</md-radio-group>";
+            
             echo $form->radio(
                 'to',
                 array(
