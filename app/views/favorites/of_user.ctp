@@ -24,36 +24,33 @@
  * @license  Affero General Public License
  * @link     http://tatoeba.org
  */
-
 $username = Sanitize::paranoid($username, array("_"));
-
+$javascript->link('/js/favorites/of.ctrl.js', false);
 if ($userExists) {
     $numberOfSentences = (int) $paginator->counter(
         array(
             "format" => "%count%"
         )
     );
-
     $title = format(__("{user}'s favorite sentences", true), array('user' => $username));
 } else {
     $title = format(__("There's no user called {username}", true), array('username' => $username));
 }
-
 $this->set('title_for_layout', $pages->formatTitle($title));
 ?>
 
 <div id="annexe_content">
     <?php
         echo $this->element(
-        'users_menu', 
+        'users_menu',
         array('username' => $username)
     );
     ?>
 </div>
 
-<div id="main_content">
+<div id="main_content" >
     <div class="module" id="favorites-list" data-success="<?php echo __("Favorite successfully removed.", true); ?>" >
-    
+
     <?php
     if (!$userExists) {
         $commonModules->displayNoSuchUser($username, $backLink);
@@ -65,44 +62,48 @@ $this->set('title_for_layout', $pages->formatTitle($title));
         );
         echo $html->tag('h2', $title);
         if ($numberOfSentences > 0) {
-
             $paginationUrl = array($username);
             $pagination->display($paginationUrl);
-
-            $type = 'mainSentence';
-            $parentId = null;
-            $withAudio = false;
-            $ownerName = null;
-            foreach ($favorites as $favorite) {
-                if (empty($favorite['Sentence']['text'])) {
-                    $sentenceId = $favorite['Favorite']['favorite_id'];
-                    $linkToSentence = $html->link(
-                        '#'.$sentenceId,
-                        array(
-                            'controller' => 'sentences',
-                            'action' => 'show',
-                            $sentenceId
-                        )
-                    );
-
-                    echo $html->div('sentence deleted',
-                        format(
-                            __('Sentence {id} has been deleted.', true),
-                            array('id' => $linkToSentence)
-                        )
-                    );
-                } else {
-                    $sentences->displayGenericSentence(
-                        $favorite['Sentence'],
-                        $favorite['Sentence']['Transcription'],
-                        $type,
-                        $parentId,
-                        $withAudio
-                    );
-                }
-            }
+            ?>
+            <md-list>
+                <? foreach ($favorites as $favorite) {
+                    if(empty($favorite['Sentence']['text'])){
+                        $sentenceId = $favorite['Favorite']['favorite_id'];
+                        $linkToSentence = $html->link(
+                            '#'.$sentenceId,
+                            array(
+                                'controller' => 'sentences',
+                                'action' => 'show',
+                                $sentenceId
+                            )
+                        ); ?>
+                        <md-list-item class="sentence" >
+                            <? echo $html->div('sentence deleted',
+                                format(
+                                    __('Sentence {id} has been deleted.', true),
+                                    array('id' => $linkToSentence)
+                                )
+                            );?>
+                        </md-list-item>
+                    <?} else {
+                        $id = $favorite['Favorite']['favorite_id'];
+                        $lang = $favorite['Sentence']['lang'];
+                        $langName = $languages->codeToNameAlone($lang);
+                        $text = $favorite['Sentence']['text'];
+                        $canRemove = $username == CurrentUser::get('username'); ?>
+                        <favorite-item id="<?= $id ?>"
+                                       lang-code="<?= $lang ?>"
+                                       lang-name="<?= $langName ?>"
+                                       text="<?= $text ?>"
+                                       can-remove="<?= $canRemove ?>"
+                                       button-text="<? __("Show sentence's details") ?>"
+                                       a-label="<? __("Loading") ?>">
+                        </favorite-item>
+                    <?}
+                 } ?>
+            </md-list>
+            <?php
             $pagination->display($paginationUrl);
-
         } else {
             __('This user does not have any favorites.');
         }
